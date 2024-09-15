@@ -1,12 +1,14 @@
 "use client"
 import Image from "next/image";
 import react, { useEffect, useState, useMemo } from "react";
+import dynamic from 'next/dynamic'
+
 
 var prevValueArray = [];
 var prevValue = "";
 prevValueArray.push("hide");
 export default function Home() {
-  useMemo(() => {
+  useEffect(() => {
     if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
       prevValueArray = localStorage.getItem("oldAray").split(",");
     }
@@ -14,7 +16,7 @@ export default function Home() {
   }, [])
   const [count, setCount] = useState(0);
   const [text, setText] = useState("");
-  const [textArray, settextArray] = useState([]);
+  const [textArray, settextArray] = useState(prevValueArray ?? []);
   //(localStorage.getItem("oldAray") !== null ? (prevValueArray = localStorage.getItem("oldAray").split(",")) : "")
   const addValueToArray = (newValue) => {
     // Create a new array with the existing values and the new value
