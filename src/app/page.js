@@ -1,101 +1,97 @@
+"use client"
 import Image from "next/image";
+import react, { useEffect, useState, useMemo } from "react";
 
+var prevValueArray = [];
+var prevValue = "";
+prevValueArray.push("hide");
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  useMemo(() => {
+    if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
+      prevValueArray = localStorage.getItem("oldAray").split(",");
+    }
+    prevValueArray.push("hide");
+  }, [])
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState("");
+  const [textArray, settextArray] = useState([]);
+  //(localStorage.getItem("oldAray") !== null ? (prevValueArray = localStorage.getItem("oldAray").split(",")) : "")
+  const addValueToArray = (newValue) => {
+    // Create a new array with the existing values and the new value
+    if (newValue != "" && prevValueArray.indexOf(newValue) == -1) {
+      settextArray([...textArray, newValue]);
+      prevValueArray.push(newValue);
+      localStorage.setItem("oldAray", prevValueArray);
+      document.getElementById("addTask").value = "";
+      setText((text) => "");
+    }
+    else if (newValue == "") {
+      return false;
+    }
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  };
+
+  const deleteFun = (e) => {
+    e.target.parentElement.remove();
+    prevValueArray = [];
+    for (var i = 0; i < document.querySelectorAll("li").length; i++) {
+      if (document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent != "hide") {
+        prevValueArray.push(document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent);
+      }
+    }
+    localStorage.setItem("oldAray", prevValueArray);
+    prevValueArray = [];
+  };
+
+  return (
+    <>
+      <div className="app-container">
+        <h1 className="app-header">TO DO LIST</h1>
+        <div className="add-task">
+          <input type="text" autoComplete="off" className="task-input " placeholder="Add New Task" id="addTask" onChange={(e) => { setText((text) => e.target.value) }} />
+          <button className="submit-task" onClick={() => addValueToArray(text)} />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <ul className="task-list">
+          {prevValueArray.length != 0 && prevValueArray.map((value, index) => (
+
+            <li className={value + " task-list-item"} v-for="task in tasks" key={Math.random()}>
+              <label className="task-list-item-label">
+                <input type="checkbox" id={index} />
+                <span>{value}</span>
+              </label>
+              <span className="delete-btn" title="Delete Task" id={index} onClick={(e) => { deleteFun(e) }}></span>
+              <span className="hide">{prevValue = value}</span>
+            </li>
+          ))}
+        </ul>
+      </div >
+
+
+    </>
   );
 }
+
+
+
+//  <toDoItem
+//               key={count}
+//               counts={count}
+//               title={text}
+//             />
+
+const toDoItem = (counts, ttile) => {
+
+  return (
+    <li className="task-list-item" v-for="task in tasks">
+      <label className="task-list-item-label">
+        <input type="checkbox" id={counts} />
+        <span>{ttile}</span>
+      </label>
+      <span class="delete-btn" title="Delete Task"></span>
+      <li key={index}>{value}</li>
+      <h1><br />{textArray} </h1>
+    </li>
+  );
+}
+
+toDoItem.displayName = "todoitem"
