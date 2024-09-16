@@ -8,12 +8,12 @@ var prevValueArray = [];
 var prevValue = "";
 prevValueArray.push("hide");
 export default function Home() {
-  useEffect(() => {
-    if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
-      prevValueArray = localStorage.getItem("oldAray").split(",");
-    }
-    prevValueArray.push("hide");
-  }, [])
+  // useEffect(() => {
+  //   if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
+  //     prevValueArray = localStorage.getItem("oldAray").split(",");
+  //   }
+  //   prevValueArray.push("hide");
+  // }, []);
   const [count, setCount] = useState(0);
   const [text, setText] = useState("");
   const [textArray, settextArray] = useState(prevValueArray ?? []);
@@ -23,7 +23,7 @@ export default function Home() {
     if (newValue != "" && prevValueArray.indexOf(newValue) == -1) {
       settextArray([...textArray, newValue]);
       prevValueArray.push(newValue);
-      localStorage.setItem("oldAray", prevValueArray);
+      //localStorage.setItem("oldAray", prevValueArray);
       document.getElementById("addTask").value = "";
       setText((text) => "");
     }
@@ -41,8 +41,8 @@ export default function Home() {
         prevValueArray.push(document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent);
       }
     }
-    localStorage.setItem("oldAray", prevValueArray);
-    prevValueArray = [];
+    // localStorage.setItem("oldAray", prevValueArray);
+    // prevValueArray = [];
   };
 
   return (
@@ -50,8 +50,8 @@ export default function Home() {
       <div className="app-container">
         <h1 className="app-header">TO DO LIST</h1>
         <div className="add-task">
-          <input type="text" autoComplete="off" className="task-input " placeholder="Add New Task" id="addTask" onChange={(e) => { setText((text) => e.target.value) }} />
-          <button className="submit-task" onClick={() => addValueToArray(text)} />
+          <input type="text" autoComplete="off" className="task-input " placeholder="Add New Task" id="addTask" />
+          <button className="submit-task" onClick={() => addValueToArray(document.getElementById("addTask").value)} />
         </div>
         <ul className="task-list">
           {prevValueArray.length != 0 && prevValueArray.map((value, index) => (
