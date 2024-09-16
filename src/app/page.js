@@ -6,14 +6,16 @@ import dynamic from 'next/dynamic'
 
 var prevValueArray = [];
 var prevValue = "";
-prevValueArray.push("hide");
 export default function Home() {
-  // useEffect(() => {
-  //   if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
-  //     prevValueArray = localStorage.getItem("oldAray").split(",");
-  //   }
-  //   prevValueArray.push("hide");
-  // }, []);
+  useEffect(() => {
+    if (localStorage.getItem("oldAray") != null && localStorage.getItem("oldAray") != "") {
+      prevValueArray = localStorage.getItem("oldAray").split(",");
+    }
+    prevValueArray.push("hide");
+    console.log(prevValueArray);
+    settextArray(prevValueArray);
+    //addValueToArray(prevValueArray);
+  }, []);
   const [count, setCount] = useState(0);
   const [text, setText] = useState("");
   const [textArray, settextArray] = useState(prevValueArray ?? []);
@@ -23,9 +25,9 @@ export default function Home() {
     if (newValue != "" && prevValueArray.indexOf(newValue) == -1) {
       settextArray([...textArray, newValue]);
       prevValueArray.push(newValue);
-      //localStorage.setItem("oldAray", prevValueArray);
+      localStorage.setItem("oldAray", prevValueArray);
       document.getElementById("addTask").value = "";
-      setText((text) => "");
+      return false;
     }
     else if (newValue == "") {
       return false;
@@ -34,14 +36,15 @@ export default function Home() {
   };
 
   const deleteFun = (e) => {
-    e.target.parentElement.remove();
+    e.target.parentElement.classList.add("hide");
     prevValueArray = [];
     for (var i = 0; i < document.querySelectorAll("li").length; i++) {
-      if (document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent != "hide") {
+      if (document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent != "hide" && !document.querySelectorAll("li")[i].classList.contains("hide")) {
         prevValueArray.push(document.querySelectorAll("li")[i].getElementsByTagName("span")[2].textContent);
       }
     }
-    // localStorage.setItem("oldAray", prevValueArray);
+    localStorage.setItem("oldAray", prevValueArray);
+    settextArray(prevValueArray);
     // prevValueArray = [];
   };
 
@@ -54,7 +57,7 @@ export default function Home() {
           <button className="submit-task" onClick={() => addValueToArray(document.getElementById("addTask").value)} />
         </div>
         <ul className="task-list">
-          {prevValueArray.length != 0 && prevValueArray.map((value, index) => (
+          {textArray.map((value, index) => (
 
             <li className={value + " task-list-item"} v-for="task in tasks" key={Math.random()}>
               <label className="task-list-item-label">
@@ -72,28 +75,3 @@ export default function Home() {
     </>
   );
 }
-
-
-
-//  <toDoItem
-//               key={count}
-//               counts={count}
-//               title={text}
-//             />
-
-const toDoItem = (counts, ttile) => {
-
-  return (
-    <li className="task-list-item" v-for="task in tasks">
-      <label className="task-list-item-label">
-        <input type="checkbox" id={counts} />
-        <span>{ttile}</span>
-      </label>
-      <span class="delete-btn" title="Delete Task"></span>
-      <li key={index}>{value}</li>
-      <h1><br />{textArray} </h1>
-    </li>
-  );
-}
-
-toDoItem.displayName = "todoitem"
